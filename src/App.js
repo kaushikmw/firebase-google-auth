@@ -12,6 +12,7 @@ import { UserPrivilageProvider } from './firebase/UserPrivilageProvider';
 import PrivateDMSRoute from './route/PrivateDMSRoute';
 import SearchDonor from './pages/SearchDonor';
 import DonorDetails from './pages/DonorDetails';
+import AcceptDonation from './pages/AcceptDonation';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
               <PrivateDMSRoute exact path ="/test" component={TestPage}/>
               <PrivateDMSRoute exact path ="/donorsearch" component={SearchDonor}/>
               <PrivateDMSRoute exact path ="/donordetails/:donorId" component={DonorDetails}/>
+              <PrivateDMSRoute exact path ="/acceptdonation/:donorId" component={AcceptDonation} />
               {/* <Route exact path="/test" component={TestPage}/> */}
               <Route exact path="/login" component={Login}/>
               <Route exact path="/">

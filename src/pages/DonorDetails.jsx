@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { firestore } from '../firebase/config';
 import { GetUserPrivilages } from '../firebase/UserPrivilageProvider';
 import { useSession } from '../firebase/UserProvider';
@@ -9,13 +9,32 @@ import CommitmentDetails from './CommitmentDetails';
 import DonationDetails from './DonationDetails';
 import GetReferenceDetails from './GetReferenceDetails';
 
+
 export default memo(function DonorDetails(props) {
     const {register, setValue, handleSubmit} = useForm();
+    
     const [donations,setDonations] = useState(null);
     const [commitments, setCommitments] = useState(null);
     const [donorRef, setDonorRef] = useState('');
+    const [donorDetails, setDonorDetails] = useState({
+        fullName : '',
+        pan: '',
+        email: '',
+        phone: '',
+        address: {
+            addressLine1: '',
+            addressLine2: '',
+            city: '',
+            pin: '',
+            state: '',
+            country: ''
+        },
+    });
+
+    
     const privilages = GetUserPrivilages();
     const params = useParams();
+    
     useEffect(async () =>  {
         const donorId = params.donorId;
         // console.log(`dnorId: ${donorId}`);
@@ -25,28 +44,44 @@ export default memo(function DonorDetails(props) {
             if(snapshot.exists){
                 
                 const data = snapshot.data();
-                setDonorRef(data.reference);
+                console.log('donor data:');console.log(data);
+                setDonorRef((data.reference !== '' || data.reference !== undefined ? data.reference : ''));
                 setValue('fullName',data.fullName);
                 setValue('pan',data.pan);
                 setValue('spiritualName',data.spiritualName);
 
-                setValue('dob',data.dob.toDate()); 
+                setValue('dob',(data.dob !== undefined) ? data.dob.toDate() : ''); 
                 setValue('email',data.email);
                 setValue('phone',data.phone);
 
-                setValue('addressLine1',data.address.addressLine1);
-                setValue('addressLine2',data.address.addressLine2);
-                setValue('city',data.address.city);
-                setValue('pin',data.address.pin);
+                setValue('addressLine1',(data.address !== "" && data.address !== undefined) ? data.address.addressLine1 : "");
+                setValue('addressLine2',(data.address !== "" && data.address !== undefined) ? data.address.addressLine2 : "");
+                setValue('city',(data.address !== "" && data.address !== undefined) ? data.address.city : "");
+                setValue('pin',(data.address !== "" && data.address !== undefined) ? data.address.pin : "");
 
-                setValue('state',data.address.state);
-                setValue('country',data.address.country);
+                setValue('state',(data.address !== "" && data.address !== undefined) ? data.address.state : "");
+                setValue('country',(data.address !== "" && data.address !== undefined) ? data.address.country : "");
                 setValue('totalDonation',data.totalDonation);
                 setValue('totalCommitment',data.totalCommitment);
 
                 setValue('totalCollection',data.totalCollection);
                 setValue('reference',data.reference);
                 
+                //Update Donor Details in the context provider
+                setDonorDetails({
+                    fullName: data.fullName,
+                    pan: data.pan,
+                    email: data.email,
+                    phone: data.phone,
+                    address: {
+                        addressLine1: (data.address !== "" && data.address !== undefined) ? data.address.addressLine1 : "",
+                        addressLine2: (data.address !== "" && data.address !== undefined) ? data.address.addressLine2 : "",
+                        city: (data.address !== "" && data.address !== undefined) ? data.address.city : "",
+                        pin: (data.address !== "" && data.address !== undefined) ? data.address.pin : "",
+                        state: (data.address !== "" && data.address !== undefined) ? data.address.state : "",
+                        country: (data.address !== "" && data.address !== undefined) ? data.address.country : ""
+                    }
+                });
 
             }//End of if(snapshot.exists)                        
         });//End of const docRef ...
@@ -68,10 +103,11 @@ export default memo(function DonorDetails(props) {
                         amount : donationData.amount,
                         bank: donationData.bank,
                         bankRef: donationData.bankRef,
-                        bankRefDate: donationData.bankRefDate.toDate().toString(),
+                        bankRefDate: (donationData.bankRefDate !== '' && donationData.bankRefDate !== undefined) ? donationData.bankRefDate.toDate().toString() : '',
                         collectedBy: donationData.collectedBy,
-                        date: donationData.date.toDate().toString(),
+                        date: (donationData.date !== '' && donationData.date !== undefined) ? donationData.date.toDate().toString() : '',
                         trust : donationData.trust,
+                        mode: donationData.mode,
                     });//End of donationDataArray.push
                    
                 });//End of snapshot.docs.map
@@ -248,7 +284,8 @@ export default memo(function DonorDetails(props) {
                     <h2>Donation Details</h2>
                 </div>
                 <div className='justify-content-center d-flex'>
-                    <button className="btn btn-link ">Accept New Donation</button>
+                    <Link to = {`/acceptdonation/${params.donorId}`} >Accept New Donation</Link>
+                    {/* <button className="btn btn-link ">Accept New Donation</button> */}
                 </div>
                 { 
                 donations !== null ? 
@@ -263,11 +300,13 @@ export default memo(function DonorDetails(props) {
                                 <th>Bank Reference</th>
                                 <th>Bank Refence Date</th>
                                 <th>Coolected by</th>
-                                <th>To Trust</th>                        
+                                <th>To Trust</th>  
+                                <th>Mode</th>    
+                                <th>Receipt</th>
                             </tr>
                         </thead>
                         <tbody>
-                        <DonationDetails donations={donations} />
+                        <DonationDetails donations={donations} donorDetails={donorDetails}/>
                             
                         </tbody>
                         </table>

@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 import { useSession } from '../firebase/UserProvider';
-
+import logo from '../img/BMSLogo.jpg';
 export default memo(function Home() {
 
     const {user} = useSession();
@@ -16,7 +16,10 @@ export default memo(function Home() {
                             {!!user && <div> Welcome {user.displayName}</div>}
                         </div>
                         <div className="justify-content-center d-flex">
-                                {!!user && <img src={user.photoURL} alt="Profile" className="rounded-circle img-thumbnail img-fluid"/>}
+                                {!!user && <div><img src={user.photoURL} alt="Profile" className="rounded-circle img-thumbnail img-fluid"/>
+                                 {/* <img src={logo} alt='BMS Logo' /> */}
+                                 </div>
+                                }
                             </div>
                     </div>
                 </div>

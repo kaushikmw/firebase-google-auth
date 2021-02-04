@@ -23,6 +23,7 @@ export default memo(function SearchDonor() {
                          .where('pan', '>=', pan);
                      const snapshot  = await query.get({source: 'server'})
                     .then(QuerySnapshot  => {
+                        console.log('querySnapshot');console.log(QuerySnapshot);
                          let donorList = [];                       
                         QuerySnapshot.forEach(donor => {
                             donorList.push({
@@ -32,8 +33,7 @@ export default memo(function SearchDonor() {
                             });
                         });//End of QuerySnapshot.forEach
 
-                         setQueryResult(donorList);
-                         
+                         setQueryResult(donorList);                         
                      });
                      
                      

@@ -1,9 +1,16 @@
 import React, { memo } from 'react'
 import GetReferenceDetails from './GetReferenceDetails'
-
-export default memo(function DonationDetails({donations}) {
+import {
+    PDFViewer,
+    PDFDownloadLink,
+    Document,
+    Page,
+    ReactPDF
+  } from "@react-pdf/renderer";
+import DonationReceipt from './DonationReceipt';
+export default memo(function DonationDetails({donations,donorDetails}) {
     // const donationData = donations;
-
+    const pdfFile = React.createRef();
     const donationList = donations.map(donation => {
         return(
             <tr key={donation.id}>
@@ -15,6 +22,19 @@ export default memo(function DonationDetails({donations}) {
                 {/* <td>{donation.collectedBy}</td> */}
                 <td><GetReferenceDetails refId={donation.collectedBy} /></td>
                 <td>{donation.trust}</td>
+                <td>{donation.mode}</td>
+                <td><PDFDownloadLink
+                    document={
+                        <DonationReceipt donation={donation} donor={donorDetails} />
+                    }
+                    fileName={donation.id}
+                    ref={pdfFile}
+                    className="btn btn-link"
+                >
+                    {({ blob, url, loading, error }) =>
+                    loading ? "Loading document..." : "Download here!"
+                    }
+                </PDFDownloadLink></td>
             </tr>
         );
     })
