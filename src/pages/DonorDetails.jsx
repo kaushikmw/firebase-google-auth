@@ -165,6 +165,7 @@ export default memo(function DonorDetails(props) {
                 : "",
             trust: donationData.trust,
             mode: donationData.mode,
+            type: donationData.type,
           }); //End of donationDataArray.push
         }); //End of snapshot.docs.map
         setDonations(donationDataArray);
@@ -448,6 +449,7 @@ export default memo(function DonorDetails(props) {
                 <DonationDetails
                   donations={donations}
                   donorDetails={donorDetails}
+                  donationType="Donation"
                 />
               </tbody>
             </table>
@@ -474,13 +476,26 @@ export default memo(function DonorDetails(props) {
             <table className="table table-bordered">
               <thead>
                 <tr>
+                  <th>Donation Date</th>
                   <th>Amount</th>
-
-                  <th>Target Date</th>
+                  <th>Bank</th>
+                  <th>Bank Reference</th>
+                  <th>Bank Refence Date</th>
+                  <th>Coolected by</th>
+                  <th>To Trust</th>
+                  <th>Mode</th>
+                  <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
+              {/* <tbody>
                 <CommitmentDetails commitments={commitments} />
+              </tbody> */}
+              <tbody>
+                <DonationDetails
+                  donations={donations}
+                  donorDetails={donorDetails}
+                  donationType="Commitment"
+                />
               </tbody>
             </table>
           </div>
