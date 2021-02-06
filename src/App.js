@@ -29,7 +29,7 @@ function App() {
               <PrivateDMSRoute exact path ="/test" component={TestPage}/>
               <PrivateDMSRoute exact path ="/donorsearch" component={SearchDonor}/>
               <PrivateDMSRoute exact path ="/donordetails/:donorId" component={DonorDetails}/>
-              <PrivateDMSRoute exact path ="/acceptdonation/:donorId" component={AcceptDonation} />
+              <PrivateDMSRoute exact path ="/acceptdonation/:type/:donorId" component={AcceptDonation} />
               {/* <Route exact path="/test" component={TestPage}/> */}
               <Route exact path="/login" component={Login}/>
               <Route exact path="/">
