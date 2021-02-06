@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
 import { firestore } from "../firebase/config";
 import { GetUserPrivilages } from "../firebase/UserPrivilageProvider";
-import { useSession } from "../firebase/UserProvider";
-import CommitmentDetails from "./CommitmentDetails";
+// import { useSession } from "../firebase/UserProvider";
+// import CommitmentDetails from "./CommitmentDetails";
 
 import DonationDetails from "./DonationDetails";
 import GetReferenceDetails from "./GetReferenceDetails";
@@ -40,8 +40,8 @@ export default memo(function DonorDetails(props) {
     docRef.onSnapshot((snapshot) => {
       if (snapshot.exists) {
         const data = snapshot.data();
-        console.log("donor data:");
-        console.log(data);
+        // console.log("donor data:");
+        // console.log(data);
         setDonorRef(
           data.reference !== "" || data.reference !== undefined
             ? data.reference
@@ -100,6 +100,7 @@ export default memo(function DonorDetails(props) {
 
         //Update Donor Details in the context provider
         setDonorDetails({
+          id: donorId,
           fullName: data.fullName,
           pan: data.pan,
           email: data.email,
@@ -135,42 +136,45 @@ export default memo(function DonorDetails(props) {
     }); //End of const docRef ...
 
     //Get donations
-    await docRef.collection("donations").onSnapshot((snapshot) => {
-      console.log(snapshot.empty);
-      if (!snapshot.empty) {
-        console.log(snapshot.docs);
-        let donationDataArray = [];
-        snapshot.docs.map((donation) => {
-          console.log(donation.id);
+    await docRef
+      .collection("donations")
+      .orderBy("date")
+      .onSnapshot((snapshot) => {
+        //   console.log(snapshot.empty);
+        if (!snapshot.empty) {
+          // console.log(snapshot.docs);
+          let donationDataArray = [];
+          snapshot.docs.map((donation) => {
+            //   console.log(donation.id);
 
-          const donationData = donation.data();
-          let bankRefDate = new Date(
-            donationData.bankRefDate * 1000
-          ).toString();
-          // console.log(donationData.bankRefDate.toDate());
-          donationDataArray.push({
-            id: donation.id,
-            amount: donationData.amount,
-            bank: donationData.bank,
-            bankRef: donationData.bankRef,
-            bankRefDate:
-              donationData.bankRefDate !== "" &&
-              donationData.bankRefDate !== undefined
-                ? donationData.bankRefDate.toDate().toString()
-                : "",
-            collectedBy: donationData.collectedBy,
-            date:
-              donationData.date !== "" && donationData.date !== undefined
-                ? donationData.date.toDate().toString()
-                : "",
-            trust: donationData.trust,
-            mode: donationData.mode,
-            type: donationData.type,
-          }); //End of donationDataArray.push
-        }); //End of snapshot.docs.map
-        setDonations(donationDataArray);
-      }
-    }); //end of await docRef.collection('donations').onSnapshot(snapshot => {
+            const donationData = donation.data();
+            let bankRefDate = new Date(
+              donationData.bankRefDate * 1000
+            ).toString();
+            // console.log(donationData.bankRefDate.toDate());
+            donationDataArray.push({
+              id: donation.id,
+              amount: donationData.amount,
+              bank: donationData.bank,
+              bankRef: donationData.bankRef,
+              bankRefDate:
+                donationData.bankRefDate !== "" &&
+                donationData.bankRefDate !== undefined
+                  ? donationData.bankRefDate.toDate().toString()
+                  : "",
+              collectedBy: donationData.collectedBy,
+              date:
+                donationData.date !== "" && donationData.date !== undefined
+                  ? donationData.date.toDate().toString()
+                  : "",
+              trust: donationData.trust,
+              mode: donationData.mode,
+              type: donationData.type,
+            }); //End of donationDataArray.push
+          }); //End of snapshot.docs.map
+          setDonations(donationDataArray);
+        }
+      }); //end of await docRef.collection('donations').onSnapshot(snapshot => {
 
     //Get Commitments
     await docRef.collection("commitments").onSnapshot((snapshot) => {

@@ -1,5 +1,6 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import GetReferenceDetails from "./GetReferenceDetails";
+import { SiConvertio } from "react-icons/si";
 import {
   PDFViewer,
   PDFDownloadLink,
@@ -8,11 +9,44 @@ import {
   ReactPDF,
 } from "@react-pdf/renderer";
 import DonationReceipt from "./DonationReceipt";
+import MyDialog from "./MyDialog";
+import { firestore } from "../firebase/config";
 export default memo(function DonationDetails({
   donations,
   donorDetails,
   donationType,
 }) {
+  const [canOpenConvertDialog, setCanOpenConvertDialog] = useState(false);
+  const [currentCommitmentId, setCurrentCommitmentId] = useState("");
+  const [currentCommitmentDate, setCurrentDommnetDate] = useState("");
+
+  const handleConvertCommitmentDialogClose = () =>
+    setCanOpenConvertDialog(false);
+  //Converts commitment to donation
+  //Checks: Donation date is today or in past
+  const convertCommitmentToDonation = async () => {
+    setCanOpenConvertDialog(false);
+    console.log(`donationId: ${currentCommitmentId}`);
+    console.log(`currentCommitmentDate: ${currentCommitmentDate}`);
+    let tDate = new Date();
+    let dDate = new Date(currentCommitmentDate);
+    console.log(`dDate.getTime(): ${dDate.getTime()}`);
+    console.log(`tDate.getTime(): ${tDate.getTime()}`);
+    console.log(`donorDetails.id: ${donorDetails.id}`);
+    console.log(`Result:  ${dDate.getTime() > tDate.getTime()}`);
+    if (dDate.getTime() > tDate.getTime()) {
+      //   console.log("Future commitments cannot be converted to donation.");
+      alert("Future commitments cannot be converted to donation.");
+    } else {
+      console.log("Updating donation");
+      await firestore
+        .collection("donors")
+        .doc(donorDetails.id)
+        .collection("donations")
+        .doc(currentCommitmentId)
+        .update({ type: "Donation" });
+    } //End of if else - if(dDate.getTime() <= tDate.getTime())
+  };
   // const donationData = donations;
   const pdfFile = React.createRef();
   const donationList = donations.map((donation) => {
@@ -35,7 +69,7 @@ export default memo(function DonationDetails({
             <td>{donation.trust}</td>
             <td>{donation.mode}</td>
             <td>
-              {donation.type === "Donation" ? (
+              {donationType === "Donation" ? (
                 <PDFDownloadLink
                   document={
                     <DonationReceipt donation={donation} donor={donorDetails} />
@@ -48,7 +82,30 @@ export default memo(function DonationDetails({
                     loading ? "Loading document..." : "Download here!"
                   }
                 </PDFDownloadLink>
-              ) : null}
+              ) : (
+                <>
+                  <button
+                    className="btn btn-outline"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentCommitmentId(donation.id);
+                      setCurrentDommnetDate(donation.date);
+                      setCanOpenConvertDialog(true);
+                    }}
+                  >
+                    <SiConvertio />
+                  </button>
+                  <MyDialog
+                    open={canOpenConvertDialog}
+                    handleClose={handleConvertCommitmentDialogClose}
+                    dialogTitle="Commitment Conversion Confirmation"
+                    dialogText="Are you sure you want to convert this commitment to donation?"
+                    handleDefault={convertCommitmentToDonation}
+                    defaultBtnText="Yes"
+                    cancelBtnText="No"
+                  />
+                </>
+              )}
             </td>
           </tr>
         ) : null}

@@ -22,10 +22,7 @@ function MyDialog(props) {
           <DialogContentText>{props.dialogText}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={(e) => props.handleDefault}
-            className="btn btn-primary"
-          >
+          <Button onClick={props.handleDefault} className="btn btn-primary">
             {props.defaultBtnText}
           </Button>
           <Button
