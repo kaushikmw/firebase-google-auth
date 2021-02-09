@@ -179,7 +179,8 @@ export default memo(function AcceptDonation(props) {
         .add({
           amount: donationData.amount,
           bank: donationData.bank !== undefined ? donationData.bank : "",
-          bankRef: donationData.bankRef !== undefined ? donationData.bank : "",
+          bankRef:
+            donationData.bankRef !== undefined ? donationData.bankRef : "",
           bankRefDate:
             donationData.bankRefDate !== undefined
               ? new Date(donationData.bankRefDate)

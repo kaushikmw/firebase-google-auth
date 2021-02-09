@@ -29,6 +29,12 @@ export default memo(function DonorDetails(props) {
       country: "",
     },
   });
+  const [areThereDonations, thereAreDonations] = useState(false);
+  const [areThereCommitments, thereAreCommitments] = useState(false);
+
+  const updateCommitmentDisplayStatus = () => {
+    thereAreCommitments(true);
+  };
 
   const privilages = GetUserPrivilages();
   const params = useParams();
@@ -97,7 +103,7 @@ export default memo(function DonorDetails(props) {
 
         setValue("totalCollection", data.totalCollection);
         setValue("reference", data.reference);
-
+        setValue("totalCommitmentCollection", data.totalCommitmentCollection);
         //Update Donor Details in the context provider
         setDonorDetails({
           id: donorId,
@@ -131,6 +137,10 @@ export default memo(function DonorDetails(props) {
                 ? data.address.country
                 : "",
           },
+          totalCollection: data.totalCollection,
+          totalCommitment: data.totalCommitment,
+          totalCommitmentCollection: data.totalCommitmentCollection,
+          totalDonation: data.totalDonation,
         });
       } //End of if(snapshot.exists)
     }); //End of const docRef ...
@@ -148,6 +158,10 @@ export default memo(function DonorDetails(props) {
             //   console.log(donation.id);
 
             const donationData = donation.data();
+            //Check the type of donation and set the type accordingly
+            // donationData.type === "Donation"
+            //   ? thereAreDonations(true)
+            //   : thereAreCommitments(true);
             let bankRefDate = new Date(
               donationData.bankRefDate * 1000
             ).toString();
@@ -177,19 +191,19 @@ export default memo(function DonorDetails(props) {
       }); //end of await docRef.collection('donations').onSnapshot(snapshot => {
 
     //Get Commitments
-    await docRef.collection("commitments").onSnapshot((snapshot) => {
-      if (!snapshot.empty) {
-        let commitmentArray = [];
-        snapshot.docs.map((commitment) => {
-          const commitmentData = commitment.data();
-          commitmentArray.push({
-            amount: commitmentData.amount,
-            targetDate: commitmentData.targetDate.toDate().toString(),
-          }); //end of commitmentArray.push()
-        }); //end of snapshot.docs.map()
-        setCommitments(commitmentArray);
-      }
-    }); //end of await docRef.collection('commitments').onSnapshot()
+    // await docRef.collection("commitments").onSnapshot((snapshot) => {
+    //   if (!snapshot.empty) {
+    //     let commitmentArray = [];
+    //     snapshot.docs.map((commitment) => {
+    //       const commitmentData = commitment.data();
+    //       commitmentArray.push({
+    //         amount: commitmentData.amount,
+    //         targetDate: commitmentData.targetDate.toDate().toString(),
+    //       }); //end of commitmentArray.push()
+    //     }); //end of snapshot.docs.map()
+    //     setCommitments(commitmentArray);
+    //   }
+    // }); //end of await docRef.collection('commitments').onSnapshot()
   }, []);
 
   const updateDonorDetails = async (donorData) => {
@@ -371,7 +385,7 @@ export default memo(function DonorDetails(props) {
           </label>
           <div className="row mb-3">
             <div className="col">
-              <label className="m-2">Total Donation:</label>
+              <label className="m-2">Total Individual Donation:</label>
               <input
                 type="text"
                 className="form-control ml-2"
@@ -382,7 +396,7 @@ export default memo(function DonorDetails(props) {
               />
             </div>
             <div className="col">
-              <label className="m-2">Total Commitment:</label>
+              <label className="m-2">Total Individual Commitment:</label>
               <input
                 type="text"
                 className="form-control p-2"
@@ -395,7 +409,17 @@ export default memo(function DonorDetails(props) {
 
           <div className="row mb-3">
             <div className="col">
-              <label className="m-2">Total Collection:</label>
+              <label className="m-2">Total Commitment from Others:</label>
+              <input
+                type="text"
+                className="form-control p-2"
+                readOnly
+                name="totalCommitmentCollection"
+                ref={register()}
+              />
+            </div>
+            <div className="col">
+              <label className="m-2">Total Collection from Others:</label>
               <input
                 type="text"
                 className="form-control ml-2"
@@ -405,6 +429,8 @@ export default memo(function DonorDetails(props) {
                 ref={register()}
               />
             </div>
+          </div>
+          <div className="row mb-3">
             <div className="col">
               <label className="m-2">Reference:</label>
 
@@ -433,7 +459,7 @@ export default memo(function DonorDetails(props) {
           </Link>
           {/* <button className="btn btn-link ">Accept New Donation</button> */}
         </div>
-        {donations !== null ? (
+        {donations ? (
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead>
@@ -475,7 +501,7 @@ export default memo(function DonorDetails(props) {
           </Link>
           {/* <button className="btn btn-link ">Accept New Donation</button> */}
         </div>
-        {commitments !== null ? (
+        {donations ? (
           <div className="table-responsive">
             <table className="table table-bordered">
               <thead>
