@@ -189,21 +189,6 @@ export default memo(function DonorDetails(props) {
           setDonations(donationDataArray);
         }
       }); //end of await docRef.collection('donations').onSnapshot(snapshot => {
-
-    //Get Commitments
-    // await docRef.collection("commitments").onSnapshot((snapshot) => {
-    //   if (!snapshot.empty) {
-    //     let commitmentArray = [];
-    //     snapshot.docs.map((commitment) => {
-    //       const commitmentData = commitment.data();
-    //       commitmentArray.push({
-    //         amount: commitmentData.amount,
-    //         targetDate: commitmentData.targetDate.toDate().toString(),
-    //       }); //end of commitmentArray.push()
-    //     }); //end of snapshot.docs.map()
-    //     setCommitments(commitmentArray);
-    //   }
-    // }); //end of await docRef.collection('commitments').onSnapshot()
   }, []);
 
   const updateDonorDetails = async (donorData) => {
@@ -214,17 +199,17 @@ export default memo(function DonorDetails(props) {
       .collection("donors")
       .doc(params.donorId)
       .update({
-        fullName: donorData.fullName,
-        spiritualName: donorData.spiritualName,
-        email: donorData.email,
+        fullName: donorData.fullName.toUpperCase(),
+        spiritualName: donorData.spiritualName.toUpperCase(),
+        email: donorData.email.toUpperCase(),
         phone: donorData.phone,
         address: {
-          addressLine1: donorData.addressLine1,
-          addressLine2: donorData.addressLine2,
-          city: donorData.city,
+          addressLine1: donorData.addressLine1.toUpperCase(),
+          addressLine2: donorData.addressLine2.toUpperCase(),
+          city: donorData.city.toUpperCase(),
           pin: donorData.pin,
-          state: donorData.state,
-          country: donorData.country,
+          state: donorData.state.toUpperCase(),
+          country: donorData.country.toUpperCase(),
         },
       })
       .then(() => {
@@ -233,32 +218,32 @@ export default memo(function DonorDetails(props) {
       }); //End of update
   };
   return (
-    <div>
+    <div style={{ position: "inherit" }}>
       <div className="card">
         <div className="justify-content-center d-flex">
           <h2>Donor Details</h2>
         </div>
         <form className="" onSubmit={handleSubmit(updateDonorDetails)}>
           <label className="d-flex">
-            <h4>Personal Details:</h4>
+            <h4 className="p-2">Personal Details:</h4>
           </label>
           <div className="row">
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Donor Name:</label>
               <input
                 type="text"
-                className="form-control ml-2"
+                className="form-control p-2"
                 id="fullName"
                 name="fullName"
                 ref={register()}
                 {...(privilages.canUpdateDonor ? "" : "readOnly")}
               />
             </div>
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">PAN:</label>
               <input
                 type="input"
-                className="form-control mr-2  p-2"
+                className="form-control p-2"
                 readOnly
                 name="pan"
                 ref={register()}
@@ -266,17 +251,17 @@ export default memo(function DonorDetails(props) {
             </div>
           </div>
           <div className="row mb-3">
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Spiritual Name:</label>
               <input
                 type="text"
-                className="form-control ml-2"
+                className="form-control p-2"
                 id="dob"
                 name="spiritualName"
                 ref={register()}
               />
             </div>
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Date of Birth:</label>
               <input
                 type="date-time"
@@ -288,20 +273,20 @@ export default memo(function DonorDetails(props) {
             </div>
           </div>
           <label className="d-flex">
-            <h4>Communication Details:</h4>
+            <h4 className="p-2">Communication Details:</h4>
           </label>
           <div className="row mb-3">
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Email:</label>
               <input
                 type="text"
-                className="form-control ml-2"
+                className="form-control p-2"
                 id="email"
                 name="email"
                 ref={register()}
               />
             </div>
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Phone:</label>
               <input
                 type="text"
@@ -312,20 +297,20 @@ export default memo(function DonorDetails(props) {
             </div>
           </div>
           <label className="d-flex">
-            <h4>Address:</h4>
+            <h4 className="p-2">Address:</h4>
           </label>
           <div className="row mb-3">
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Address Line1:</label>
               <input
                 type="text"
-                className="form-control ml-2"
+                className="form-control p-2"
                 id="addressLine1"
                 name="addressLine1"
                 ref={register()}
               />
             </div>
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Address Line2:</label>
               <input
                 type="text"
@@ -337,17 +322,17 @@ export default memo(function DonorDetails(props) {
           </div>
 
           <div className="row mb-3">
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">City:</label>
               <input
                 type="text"
-                className="form-control ml-2"
+                className="form-control p-2"
                 id="city"
                 name="city"
                 ref={register()}
               />
             </div>
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Pin Code:</label>
               <input
                 type="text"
@@ -359,17 +344,17 @@ export default memo(function DonorDetails(props) {
           </div>
 
           <div className="row mb-3">
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">State:</label>
               <input
                 type="text"
-                className="form-control ml-2"
+                className="form-control p-2"
                 id="state"
                 name="state"
                 ref={register()}
               />
             </div>
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Country:</label>
               <input
                 type="text"
@@ -381,21 +366,21 @@ export default memo(function DonorDetails(props) {
           </div>
 
           <label className="d-flex">
-            <h4>Total Donations:</h4>
+            <h4 className="p-2">Total Donations:</h4>
           </label>
           <div className="row mb-3">
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Total Individual Donation:</label>
               <input
                 type="text"
-                className="form-control ml-2"
+                className="form-control p-2"
                 id="totalDonation"
                 name="totalDonation"
                 readOnly
                 ref={register()}
               />
             </div>
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Total Individual Commitment:</label>
               <input
                 type="text"
@@ -408,7 +393,7 @@ export default memo(function DonorDetails(props) {
           </div>
 
           <div className="row mb-3">
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Total Commitment from Others:</label>
               <input
                 type="text"
@@ -418,11 +403,11 @@ export default memo(function DonorDetails(props) {
                 ref={register()}
               />
             </div>
-            <div className="col">
+            <div className="col-md-6">
               <label className="m-2">Total Collection from Others:</label>
               <input
                 type="text"
-                className="form-control ml-2"
+                className="form-control p-2"
                 id="totalCollection"
                 name="totalCollection"
                 readOnly
